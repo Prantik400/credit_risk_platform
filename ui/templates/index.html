@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>NeoStats · Credit Risk Intelligence</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="/static/css/style.css">
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2.2.0/dist/chartjs-plugin-datalabels.min.js"></script>
+</head>
+<body>
+  <!-- ── SIDEBAR -->
+  <nav class="sidebar">
+    <div class="sidebar-brand">
+      <div class="brand-icon">N</div>
+      <div>
+        <div class="brand-name">NeoStats</div>
+        <div class="brand-sub">Credit Risk AI</div>
+      </div>
+    </div>
+
+    <div class="nav-section-label">ANALYSIS</div>
+    <a class="nav-item active" data-tab="eda" onclick="switchTab('eda')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+      Explore Data
+    </a>
+    <a class="nav-item" data-tab="insights" onclick="switchTab('insights')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M2 20h20M6 20V10l6-6 6 6v10"/></svg>
+      Key Insights
+    </a>
+
+    <div class="nav-section-label">PREDICTION</div>
+    <a class="nav-item" data-tab="predict" onclick="switchTab('predict')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M12 8v4l3 3"/></svg>
+      Risk Score
+    </a>
+    <a class="nav-item" data-tab="explain" onclick="switchTab('explain')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><path d="M9.09 9a3 3 0 0 1 5.83 1c0 2-3 3-3 3M12 17h.01"/></svg>
+      Explainability
+    </a>
+    <a class="nav-item" data-tab="metrics" onclick="switchTab('metrics')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="22 12 18 12 15 21 9 3 6 12 2 12"/></svg>
+      Model Metrics
+    </a>
+
+    <a class="nav-item" data-tab="rules" onclick="switchTab('rules')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 11l3 3L22 4"/><path d="M21 12v7a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11"/></svg>
+      Decision Rules
+    </a>
+
+    <div class="nav-section-label">INTELLIGENCE</div>
+    <a class="nav-item" data-tab="chat" onclick="switchTab('chat')">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+      Ask the Data
+    </a>
+
+    <div class="sidebar-status" id="sidebarStatus">
+      <div class="status-dot" id="statusDot"></div>
+      <span id="statusText">Checking…</span>
+    </div>
+  </nav>
+
+  <!--MAIN-->
+  <main class="main">
+
+    <!--EDA TAB-->
+    <div id="tab-eda" class="tab-pane active">
+      <div class="page-header">
+        <h1>Exploratory Data Analysis</h1>
+        <p>Overview of the Home Credit loan application dataset</p>
+      </div>
+
+      <div class="kpi-grid" id="kpiGrid">
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+      </div>
+
+      <div class="charts-grid-2">
+        <div class="card">
+          <div class="card-header">Gender Distribution</div>
+          <canvas id="genderChart" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">Contract Type &amp; Default Rate</div>
+          <canvas id="contractChart" height="220"></canvas>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">Default Rate by Income Type</div>
+        <canvas id="incomeChart" height="200"></canvas>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">Education Level vs Default Rate</div>
+        <canvas id="educationChart" height="200"></canvas>
+      </div>
+    </div>
+
+    <!--INSIGHTS TAB-->
+    <div id="tab-insights" class="tab-pane">
+      <div class="page-header">
+        <h1>Key Business Insights</h1>
+        <p>Five data-driven findings for credit policy decisions</p>
+      </div>
+      <div class="insights-list" id="insightsList">
+        <div class="insight-loading">Loading insights…</div>
+      </div>
+    </div>
+
+    <!--PREDICT TAB-->
+    <div id="tab-predict" class="tab-pane">
+      <div class="page-header">
+        <h1>Risk Scoring</h1>
+        <p>Enter applicant details to get an instant credit risk assessment</p>
+      </div>
+
+      <div class="predict-layout">
+        <div class="card predict-form-card">
+          <div class="card-header">Applicant Information</div>
+          <div class="form-grid">
+
+            <div class="form-group">
+              <label>Annual Income (₹)</label>
+              <input type="number" id="f_income" value="270000" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Loan Amount (₹)</label>
+              <input type="number" id="f_credit" value="500000" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Annuity Amount (₹)</label>
+              <input type="number" id="f_annuity" value="25000" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Goods Price (₹)</label>
+              <input type="number" id="f_goods" value="450000" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Age (years)</label>
+              <input type="number" id="f_age" value="35" min="18" max="100"/>
+            </div>
+            <div class="form-group">
+              <label>Years Employed</label>
+              <input type="number" id="f_emp" value="5" min="0"/>
+            </div>
+            <div class="form-group">
+              <label>Gender</label>
+              <select id="f_gender">
+                <option value="M">Male</option>
+                <option value="F">Female</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Contract Type</label>
+              <select id="f_contract">
+                <option>Cash loans</option>
+                <option>Revolving loans</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Education</label>
+              <select id="f_edu">
+                <option>Secondary / secondary special</option>
+                <option>Higher education</option>
+                <option>Incomplete higher</option>
+                <option>Lower secondary</option>
+                <option>Academic degree</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Income Type</label>
+              <select id="f_income_type">
+                <option>Working</option>
+                <option>Commercial associate</option>
+                <option>Pensioner</option>
+                <option>State servant</option>
+                <option>Unemployed</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Own Car</label>
+              <select id="f_car">
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Own Realty</label>
+              <select id="f_realty">
+                <option value="Y">Yes</option>
+                <option value="N">No</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Ext. Score 1 (0-1)</label>
+              <input type="number" id="f_ext1" value="0.5" min="0" max="1" step="0.01"/>
+            </div>
+            <div class="form-group">
+              <label>Ext. Score 2 (0-1)</label>
+              <input type="number" id="f_ext2" value="0.5" min="0" max="1" step="0.01"/>
+            </div>
+            <div class="form-group">
+              <label>Ext. Score 3 (0-1)</label>
+              <input type="number" id="f_ext3" value="0.5" min="0" max="1" step="0.01"/>
+            </div>
+            <div class="form-group">
+              <label>Family Members</label>
+              <input type="number" id="f_family" value="2" min="1" max="20"/>
+            </div>
+          </div>
+          <button class="btn-primary" onclick="runPrediction()">
+            Assess Risk
+          </button>
+        </div>
+
+        <div class="predict-result-col">
+          <div class="card" id="resultCard" style="display:none">
+            <div class="card-header">Risk Assessment Result</div>
+            <div class="risk-gauge-wrap">
+              <canvas id="gaugeChart" width="260" height="160"></canvas>
+              <div class="gauge-label">
+                <div class="gauge-score" id="gaugeScore">—</div>
+                <div class="gauge-band" id="gaugeBand">—</div>
+              </div>
+            </div>
+            <div class="risk-metrics-grid" id="riskMetrics"></div>
+            <div class="decision-badge" id="decisionBadge"></div>
+          </div>
+          <div class="card mt-4" id="shapPreviewCard" style="display:none">
+            <div class="card-header">Top Risk Drivers (SHAP)</div>
+            <div id="shapPreview"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- EXPLAINABILITY TAB -->
+    <div id="tab-explain" class="tab-pane">
+      <div class="page-header">
+        <h1>Explainable AI</h1>
+        <p>SHAP-based global and local explanation of model decisions</p>
+      </div>
+      <div class="card">
+        <div class="card-header">Global Feature Importance (SHAP)</div>
+        <canvas id="globalShapChart" height="320"></canvas>
+      </div>
+      <div class="card mt-4" id="localShapCard" style="display:none">
+        <div class="card-header">Last Prediction – Local SHAP Explanation</div>
+        <canvas id="localShapChart" height="300"></canvas>
+      </div>
+    </div>
+
+    <!-- METRICS TAB -->
+    <div id="tab-metrics" class="tab-pane">
+      <div class="page-header">
+        <h1>Model Performance</h1>
+        <p>Training and out-of-fold evaluation metrics</p>
+      </div>
+      <div class="kpi-grid" id="metricKpis">
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+      </div>
+      <div class="charts-grid-2 mt-4">
+        <div class="card">
+          <div class="card-header">Per-Fold AUC</div>
+          <canvas id="foldAucChart" height="220"></canvas>
+        </div>
+        <div class="card">
+          <div class="card-header">Confusion Matrix</div>
+          <div id="confusionMatrix" class="confusion-wrap"></div>
+        </div>
+      </div>
+      <div class="card mt-4">
+        <div class="card-header">Model Configuration</div>
+        <div id="modelConfig" class="config-table"></div>
+      </div>
+    </div>
+
+    <!-- RULES TAB-->
+    <div id="tab-rules" class="tab-pane">
+      <div class="page-header">
+        <h1>Decision Rules</h1>
+        <p>Scorecard rules and ML-distilled policy logic for credit officers</p>
+      </div>
+
+      <div class="kpi-grid" id="rulesKpis">
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+        <div class="kpi-card skeleton"></div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">Scorecard Rules — Policy Engine</div>
+        <div id="rulesTable"></div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">Rule Evaluation — Last Prediction</div>
+        <div id="ruleEvalResult">
+          <div style="color:var(--text-muted);font-size:13px;padding:10px 0">
+            Run a Risk Score prediction first, then view triggered rules here.
+          </div>
+        </div>
+      </div>
+
+      <div class="card mt-4">
+        <div class="card-header">ML-Distilled Decision Tree (top features)</div>
+        <div id="treeRulesBox" style="font-family:'JetBrains Mono',monospace;font-size:11px;color:var(--accent2);white-space:pre;overflow-x:auto;padding:4px 0">
+          Loading…
+        </div>
+      </div>
+    </div>
+
+    <!--CHAT TAB -->
+    <div id="tab-chat" class="tab-pane">
+      <div class="page-header">
+        <h1>Ask the Data</h1>
+        <p>Natural-language interface — powered by LLM + SQL</p>
+      </div>
+
+      <div class="suggested-questions">
+        <div class="sq-label">Try asking:</div>
+        <div class="sq-chips">
+          <button class="sq-chip" onclick="askQuestion('What is the overall default rate?')">What is the overall default rate?</button>
+          <button class="sq-chip" onclick="askQuestion('Show default rate by gender')">Default rate by gender</button>
+          <button class="sq-chip" onclick="askQuestion('Which income type has the highest default rate?')">Highest default by income</button>
+          <button class="sq-chip" onclick="askQuestion('Top 5 occupations by number of applicants')">Top 5 occupations</button>
+          <button class="sq-chip" onclick="askQuestion('How many high risk applicants are there?')">High-risk applicants</button>
+          <button class="sq-chip" onclick="askQuestion('Average loan amount by education type')">Loan by education</button>
+        </div>
+      </div>
+
+      <div class="chat-messages" id="chatMessages">
+        <div class="chat-welcome">
+          <div class="chat-welcome-icon">🤖</div>
+          <div>Ask any question about the credit dataset in plain English.<br>I'll convert it to SQL and explain the findings.</div>
+        </div>
+      </div>
+
+      <div class="chat-input-row">
+        <input type="text" id="chatInput" placeholder="e.g. What percentage of applicants own a car?" 
+               onkeydown="if(event.key==='Enter') sendChat()"/>
+        <button class="btn-primary" onclick="sendChat()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" width="18" height="18"><line x1="22" y1="2" x2="11" y2="13"/><polygon points="22 2 15 22 11 13 2 9 22 2"/></svg>
+        </button>
+      </div>
+    </div>
+
+  </main>
+
+  <script src="/static/js/app.js"></script>
+</body>
+</html>

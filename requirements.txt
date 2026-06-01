@@ -1,0 +1,27 @@
+# Core
+flask==3.0.3
+flask-cors==4.0.1
+gunicorn==22.0.0
+
+# Data
+pandas==2.2.2
+numpy==1.26.4
+scikit-learn==1.5.0
+lightgbm==4.3.0
+
+# Explainability
+shap==0.45.1
+
+# LLM clients — install only what you need
+# FREE (recommended for students):
+google-generativeai==0.7.2   # Gemini — free tier, no credit card needed
+
+# Also free (alternative):
+# groq==0.9.0                # Uncomment if using Groq instead
+
+# Paid (skip if student):
+# anthropic==0.28.1
+# openai==1.35.3
+
+# Utilities
+python-dotenv==1.0.1

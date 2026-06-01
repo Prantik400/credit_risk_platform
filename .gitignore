@@ -1,0 +1,31 @@
+data/
+*.csv
+
+# Trained models
+models/
+*.pkl
+*.joblib
+
+# SQLite DB
+sql/*.db
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+.venv/
+venv/
+*.egg-info/
+dist/
+build/
+
+# Environment
+.env
+
+# Notebooks outputs
+notebooks/.ipynb_checkpoints/
+notebooks/**/.ipynb_checkpoints/
+
+# OS
+.DS_Store
+Thumbs.db
