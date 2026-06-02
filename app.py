@@ -45,7 +45,7 @@ def status():
 
 @app.route("/api/eda/summary")
 def eda_summary():
-    """Return high-level dataset statistics from the DB."""
+    
     if not _db_ready():
         return jsonify({"error": "Database not ready"}), 503
     try:
@@ -102,7 +102,7 @@ def eda_summary():
 
 @app.route("/api/eda/insights")
 def eda_insights():
-    """Return 5 key business insights as pre-computed stats."""
+    
     if not _db_ready():
         return jsonify({"error": "Database not ready"}), 503
     try:
@@ -186,7 +186,7 @@ def eda_insights():
 
 @app.route("/api/predict", methods=["POST"])
 def predict():
-    """Score a single applicant from form data."""
+   
     if not _model_ready():
         return jsonify({"error": "Model not trained yet. Run train.py first."}), 503
     try:
@@ -201,7 +201,7 @@ def predict():
 
 @app.route("/api/metrics")
 def metrics():
-    """Return stored training metrics."""
+    
     if not _model_ready():
         return jsonify({"error": "Model not trained"}), 503
     try:
@@ -213,7 +213,7 @@ def metrics():
 
 @app.route("/api/shap-importance")
 def shap_importance():
-    """Return global SHAP feature importance."""
+    
     path = os.path.join(MODELS_DIR, "shap_importance.csv")
     if not os.path.exists(path):
         return jsonify({"error": "SHAP data not available"}), 404
@@ -224,7 +224,7 @@ def shap_importance():
 
 @app.route("/api/chat", methods=["POST"])
 def chat():
-    """Convert a natural-language question to SQL, run it, and interpret."""
+  
     if not _db_ready():
         return jsonify({"error": "Database not ready"}), 503
     try:
@@ -266,7 +266,7 @@ def chat():
 
 @app.route("/api/rules")
 def get_rules():
-    """Return all scorecard rules and distilled tree rules."""
+ 
     try:
         from src.ml.rules import load_rules
         return jsonify(load_rules())
@@ -277,7 +277,7 @@ def get_rules():
 
 @app.route("/api/rules/evaluate", methods=["POST"])
 def evaluate_rules():
-    """Apply rule engine to a single applicant payload."""
+    
     try:
         from src.ml.rules import apply_rules
         data = request.get_json(force=True)
@@ -290,7 +290,7 @@ def evaluate_rules():
 
 @app.route("/api/rules/generate", methods=["POST"])
 def generate_rules():
-    """Derive and save rules from training data (long-running)."""
+  
     if not _model_ready():
         return jsonify({"error": "Model not trained yet"}), 503
     try:
